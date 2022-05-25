@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Chessboard to FEN detector</title>
+  </head>
+  <body>
+    <h1>Chessboard to FEN detector</h1>
+    <h2>Upload your image with e-chessboard (eg. from chess.com) and it will convert it to FEN notation</h2>
+    <div><p>Hint: smallcase - white, uppercase - black; <b>p</b> for Pawn, <b>b</b> for Bishop, <b>n</b> for Knight, <b>r</b> for Rook, <b>q</b> for Queen, <b>k</b> for King</p></div>
+    <p>
+      {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul>
+        {% for message in messages %}
+          <li>{{ message }}</li>
+        {% endfor %}
+        </ul>
+        {% endif %}
+      {% endwith %}
+    </p>
+    <form method="POST" action="" enctype="multipart/form-data">
+      <p><input type="file" name="file"></p>
+      <p><input type="submit" value="Submit"></p>
+    </form>
+    {% if src_base64 %}
+      <h2>Your image:</h2>
+      <div>
+        <img src={{src_base64}}>
+      </div>
+    {% endif %}
+    {% if result %}
+    <h2>Found boards:</h2>
+      {% for board, fen in result %}
+      <p><img src={{board}}></p>
+      <p>{{fen}}</p>
+      {% endfor %}
+    {% endif %}
+  </body>
+</html>
