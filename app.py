@@ -1,4 +1,5 @@
 from flask import Flask, flash, request, redirect, url_for, render_template
+from itsdangerous import URLSafeSerializer
 import torch
 import numpy as np
 from PIL import Image
@@ -52,6 +53,8 @@ def upload_file():
 
 @app.route('/example', methods=['POST','GET'])
 def example():
+    if request.method == 'POST':
+        return redirect('/',code=307)
     img = Image.open('example.png')
     output_buffer = BytesIO()
     img.save(output_buffer, format='PNG')
