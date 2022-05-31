@@ -3,6 +3,8 @@ import numpy as np
 from pathlib import Path
 from typing import List, Dict
 from PIL import Image,ImageOps
+import base64
+from io import BytesIO
 
 def prepare_dataset(dataset_type):
     assert dataset_type in ('train','test')
@@ -136,3 +138,44 @@ def decode_FEN(rank_numeric: np.array, decoder_dict: Dict[int, str]) -> str:
         result += str(empty)
     
     return result
+
+def detect_chessboard(detector, image_base64:bytes) -> List[bytes]:
+        byte_data = base64.b64decode(image_base64)
+        image_data = BytesIO(byte_data)
+        img = Image.open(image_data)
+
+        found_boards = detector(img)
+        found_boards = found_boards.xyxy[0].numpy()
+        boards_b64 = []
+        for board in found_boards:
+            board = board[:4]
+            board = img.crop(board)
+
+            output_buffer = BytesIO()
+            board.save(output_buffer, format='PNG')
+            byte_data = output_buffer.getvalue()
+            boards_b64.append(base64.b64encode(byte_data))
+        return boards_b64
+
+def get_FEN(model:torch.nn.Module, boards:List[bytes]):
+        FENS = []
+        for board in boards:
+            byte_data = base64.b64decode(board)
+            image_data = BytesIO(byte_data)
+            img = Image.open(image_data)
+            img = img.resize((400,400))
+
+            bw_board = ImageOps.grayscale(img)
+            bw_board = np.array(bw_board)
+            sliced_board = slice_board(bw_board)
+            sliced_board = torch.FloatTensor(sliced_board)
+
+            ans = model(sliced_board).argmax(1)
+            if ans.is_cuda:
+                ans = ans.cpu()
+            ans = ans.numpy().reshape(ans.shape[0]//64,64)
+            FEN = numeric_to_FEN(ans, model.figures_dict)
+
+            FENS.append(FEN)
+        
+        return FENS

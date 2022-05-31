@@ -2,11 +2,60 @@
 <html>
   <head>
     <title>Chessboard to FEN detector</title>
+    <style>
+      p {
+        color: black;
+        font-size: 12px;
+      }
+      .FEN {
+        font-size: 15px;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
     <h1>Chessboard to FEN detector</h1>
     <h2>Upload your image with e-chessboard (eg. from chess.com) and it will convert it to FEN notation</h2>
-    <div><p>Hint: smallcase - white, uppercase - black; <b>p</b> for Pawn, <b>b</b> for Bishop, <b>n</b> for Knight, <b>r</b> for Rook, <b>q</b> for Queen, <b>k</b> for King</p></div>
+    <div><table style="width: 305px; height: 192px;" width="243">
+      <tbody>
+      <tr>
+      <td style="width: 65.1406px;"><strong>Figure</strong></td>
+      <td style="width: 105.438px;"><strong>FEN for black</strong></td>
+      <td style="width: 112.422px;"><strong>FEN for white</strong></td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">Pawn</td>
+      <td style="width: 105.438px;">p</td>
+      <td style="width: 112.422px;">P</td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">Knignt</td>
+      <td style="width: 105.438px;">n</td>
+      <td style="width: 112.422px;">N</td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">Bishop</td>
+      <td style="width: 105.438px;">b</td>
+      <td style="width: 112.422px;">B</td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">Rook</td>
+      <td style="width: 105.438px;">r</td>
+      <td style="width: 112.422px;">R</td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">Queen</td>
+      <td style="width: 105.438px;">q</td>
+      <td style="width: 112.422px;">Q</td>
+      </tr>
+      <tr>
+      <td style="width: 65.1406px;">King</td>
+      <td style="width: 105.438px;">k</td>
+      <td style="width: 112.422px;">K</td>
+      </tr>
+      </tbody>
+      </table></div>
+      <p><a href={{ url_for('example') }}>Show me example!</a></p> 
     <p>
       {% with messages = get_flashed_messages() %}
         {% if messages %}
@@ -31,8 +80,8 @@
     {% if result %}
     <h2>Found boards:</h2>
       {% for board, fen in result %}
+      <p class="FEN";>{{fen}}</p>
       <p><img src={{board}}></p>
-      <p>{{fen}}</p>
       {% endfor %}
     {% endif %}
   </body>
